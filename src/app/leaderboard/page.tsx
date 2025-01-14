@@ -1,8 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { getAllRewards, getUserByEmail } from '@/utils/db/actions'
-import { Loader, Award, User, Trophy, Crown } from 'lucide-react'
+import { Loader, Award, Users, Trophy, Crown } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { useUser } from '@clerk/nextjs'
 
 type Reward = {
   id: number
@@ -14,9 +15,10 @@ type Reward = {
 }
 
 export default function LeaderboardPage() {
+  const { user } = useUser();
   const [rewards, setRewards] = useState<Reward[]>([])
   const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<{ id: number; email: string; name: string } | null>(null)
+  const [User, setUser] = useState<{ id: number; email: string; name: string } | null>(null)
 
   useEffect(() => {
     const fetchRewardsAndUser = async () => {
@@ -25,7 +27,7 @@ export default function LeaderboardPage() {
         const fetchedRewards = await getAllRewards()
         setRewards(fetchedRewards)
 
-        const userEmail = localStorage.getItem('userEmail')
+        const userEmail = user?.primaryEmailAddress?.emailAddress;
         if (userEmail) {
           const fetchedUser = await getUserByEmail(userEmail)
           if (fetchedUser) {
@@ -77,7 +79,7 @@ export default function LeaderboardPage() {
                 </thead>
                 <tbody>
                   {rewards.map((reward, index) => (
-                    <tr key={reward.id} className={`${user && user.id === reward.userId ? 'bg-indigo-50' : ''} hover:bg-gray-50 transition-colors duration-150 ease-in-out`}>
+                    <tr key={reward.id} className={`${User && User.id === reward.userId ? 'bg-indigo-50' : ''} hover:bg-gray-50 transition-colors duration-150 ease-in-out`}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           {index < 3 ? (
@@ -90,7 +92,7 @@ export default function LeaderboardPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
-                            <User className="h-full w-full rounded-full bg-gray-200 text-gray-500 p-2" />
+                            <Users className="h-full w-full rounded-full bg-gray-200 text-gray-500 p-2" />
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-medium text-gray-900">{reward.userName}</div>

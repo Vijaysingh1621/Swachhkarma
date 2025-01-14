@@ -4,6 +4,7 @@ import { Coins, ArrowUpRight, ArrowDownRight, Gift, AlertCircle, Loader } from '
 import { Button } from '@/components/ui/button'
 import { getUserByEmail, getRewardTransactions, getAvailableRewards, redeemReward, createTransaction } from '@/utils/db/actions'
 import { toast } from 'react-hot-toast'
+import { useUser } from '@clerk/nextjs'
 
 type Transaction = {
   id: number
@@ -22,7 +23,8 @@ type Reward = {
 }
 
 export default function RewardsPage() {
-  const [user, setUser] = useState<{ id: number; email: string; name: string } | null>(null)
+  const { user } = useUser();
+  const [User, setUser] = useState<{ id: number; email: string; name: string } | null>(null)
   const [balance, setBalance] = useState(0)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [rewards, setRewards] = useState<Reward[]>([])
@@ -32,7 +34,7 @@ export default function RewardsPage() {
     const fetchUserDataAndRewards = async () => {
       setLoading(true)
       try {
-        const userEmail = localStorage.getItem('userEmail')
+        const userEmail = user?.primaryEmailAddress?.emailAddress;
         if (userEmail) {
           const fetchedUser = await getUserByEmail(userEmail)
           if (fetchedUser) {
@@ -63,7 +65,7 @@ export default function RewardsPage() {
   }, [])
 
   const handleRedeemReward = async (rewardId: number) => {
-    if (!user) {
+    if (!User) {
       toast.error('Please log in to redeem rewards.')
       return
     }
@@ -77,10 +79,10 @@ export default function RewardsPage() {
         }
 
         // Update database
-        await redeemReward(user.id, rewardId);
+        await redeemReward(User.id, rewardId);
         
         // Create a new transaction record
-        await createTransaction(user.id, 'redeemed', reward.cost, `Redeemed ${reward.name}`);
+        await createTransaction(User.id, 'redeemed', reward.cost, `Redeemed ${reward.name}`);
 
         // Refresh user data and rewards after redemption
         await refreshUserData();
@@ -96,7 +98,7 @@ export default function RewardsPage() {
   }
 
   const handleRedeemAllPoints = async () => {
-    if (!user) {
+    if (!User) {
       toast.error('Please log in to redeem points.');
       return;
     }
@@ -104,10 +106,10 @@ export default function RewardsPage() {
     if (balance > 0) {
       try {
         // Update database
-        await redeemReward(user.id, 0);
+        await redeemReward(User.id, 0);
         
         // Create a new transaction record
-        await createTransaction(user.id, 'redeemed', balance, 'Redeemed all points');
+        await createTransaction(User.id, 'redeemed', balance, 'Redeemed all points');
 
         // Refresh user data and rewards after redemption
         await refreshUserData();
@@ -123,8 +125,8 @@ export default function RewardsPage() {
   }
 
   const refreshUserData = async () => {
-    if (user) {
-      const fetchedUser = await getUserByEmail(user.email);
+    if (User) {
+      const fetchedUser = await getUserByEmail(User.email);
       if (fetchedUser) {
         const fetchedTransactions = await getRewardTransactions(fetchedUser.id);
         setTransactions(fetchedTransactions as Transaction[]);

@@ -7,6 +7,7 @@ import { Poppins } from 'next/font/google'
 import Link from 'next/link'
 import ContractInteraction from '@/components/ContractInteraction'
 import { getRecentReports, getAllRewards, getWasteCollectionTasks } from '@/utils/db/actions'
+import { SignedOut,SignedIn } from '@clerk/nextjs'
 const poppins = Poppins({ 
   weight: ['300', '400', '600'],
   subsets: ['latin'],
@@ -88,19 +89,22 @@ export default function Home() {
         <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8">
           Join our community in making waste management more efficient and rewarding!
         </p>
-        {!loggedIn ? (
+        <SignedOut>
           <Button onClick={login} className="bg-green-600 hover:bg-green-700 text-white text-lg py-6 px-10 rounded-full font-medium transition-all duration-300 ease-in-out transform hover:scale-105">
             Get Started
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
-        ) : (
+          </SignedOut>
+          <SignedIn>
           <Link href="/report">
             <Button className="bg-green-600 hover:bg-green-700 text-white text-lg py-6 px-10 rounded-full font-medium transition-all duration-300 ease-in-out transform hover:scale-105">
               Report Waste
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-          </Link>
-        )}
+            </Link>
+            </SignedIn>
+          
+      
       </section>
       
       <section className="grid md:grid-cols-3 gap-10 mb-20">

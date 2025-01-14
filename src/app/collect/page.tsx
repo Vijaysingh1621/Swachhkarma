@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { toast } from 'react-hot-toast'
 import { getWasteCollectionTasks, updateTaskStatus, saveReward, saveCollectedWaste, getUserByEmail } from '@/utils/db/actions'
 import { GoogleGenerativeAI } from "@google/generative-ai"
+import { useUser } from '@clerk/nextjs'
 
 // Make sure to set your Gemini API key in your environment variables
 const geminiApiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
@@ -23,19 +24,21 @@ type CollectionTask = {
 const ITEMS_PER_PAGE = 5
 
 export default function CollectPage() {
+  const { user } = useUser();
+
   const [tasks, setTasks] = useState<CollectionTask[]>([])
   const [loading, setLoading] = useState(true)
   const [hoveredWasteType, setHoveredWasteType] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
-  const [user, setUser] = useState<{ id: number; email: string; name: string } | null>(null)
+  const [User, setUser] = useState<{ id: number; email: string; name: string } | null>(null)
 
   useEffect(() => {
     const fetchUserAndTasks = async () => {
       setLoading(true)
       try {
         // Fetch user
-        const userEmail = localStorage.getItem('userEmail')
+        const userEmail =  user?.primaryEmailAddress?.emailAddress;
         if (userEmail) {
           const fetchedUser = await getUserByEmail(userEmail)
           if (fetchedUser) {
@@ -74,16 +77,16 @@ export default function CollectPage() {
   const [reward, setReward] = useState<number | null>(null)
 
   const handleStatusChange = async (taskId: number, newStatus: CollectionTask['status']) => {
-    if (!user) {
+    if (!User) {
       toast.error('Please log in to collect waste.')
       return
     }
 
     try {
-      const updatedTask = await updateTaskStatus(taskId, newStatus, user.id)
+      const updatedTask = await updateTaskStatus(taskId, newStatus, User.id)
       if (updatedTask) {
         setTasks(tasks.map(task => 
-          task.id === taskId ? { ...task, status: newStatus, collectorId: user.id } : task
+          task.id === taskId ? { ...task, status: newStatus, collectorId: User.id } : task
         ))
         toast.success('Task status updated successfully')
       } else {
@@ -111,7 +114,7 @@ export default function CollectPage() {
   }
 
   const handleVerify = async () => {
-    if (!selectedTask || !verificationImage || !user) {
+    if (!selectedTask || !verificationImage || !User) {
       toast.error('Missing required information for verification.')
       return
     }
@@ -168,10 +171,10 @@ export default function CollectPage() {
           const earnedReward = Math.floor(Math.random() * 50) + 10 // Random reward between 10 and 59
           
           // Save the reward
-          await saveReward(user.id, earnedReward)
+          await saveReward(User.id, earnedReward)
 
           // Save the collected waste
-          await saveCollectedWaste(selectedTask.id, user.id, parsedResult)
+          await saveCollectedWaste(selectedTask.id, User.id, parsedResult)
 
           setReward(earnedReward)
           toast.success(`Verification successful! You earned ${earnedReward} tokens!`, {
@@ -270,12 +273,12 @@ export default function CollectPage() {
                       Start Collection
                     </Button>
                   )}
-                  {task.status === 'in_progress' && task.collectorId === user?.id && (
+                  {task.status === 'in_progress' && task.collectorId === User?.id && (
                     <Button onClick={() => setSelectedTask(task)} variant="outline" size="sm">
                       Complete & Verify
                     </Button>
                   )}
-                  {task.status === 'in_progress' && task.collectorId !== user?.id && (
+                  {task.status === 'in_progress' && task.collectorId !== User?.id && (
                     <span className="text-yellow-600 text-sm font-medium">In progress by another collector</span>
                   )}
                   {task.status === 'verified' && (
