@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Trash2, MapPin, CheckCircle, Clock, ArrowRight, Camera, Upload, Loader, Calendar, Weight, Search } from 'lucide-react'
+import { Trash2, MapPin, CheckCircle, Clock, ArrowRight, Camera, Upload, Loader, Calendar, Weight, Search, Flag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'react-hot-toast'
@@ -112,9 +112,9 @@ export default function CollectPage() {
   const readFileAsBase64 = (dataUrl: string): string => {
     return dataUrl.split(',')[1]
   }
-
+  console.log(selectedTask?.amount)
   const handleVerify = async () => {
-    if (!selectedTask || !verificationImage || !User) {
+    if (!selectedTask || !verificationImage || !user) {
       toast.error('Missing required information for verification.')
       return
     }
@@ -138,7 +138,7 @@ export default function CollectPage() {
 
       const prompt = `You are an expert in waste management and recycling. Analyze this image and provide:
         1. Confirm if the waste type matches: ${selectedTask.wasteType}
-        2. Estimate if the quantity matches: ${selectedTask.amount}
+        2. Estimate if the quantity matches : ${selectedTask?.amount} 
         3. Your confidence level in this assessment (as a percentage)
         
         Respond in JSON format like this:
@@ -150,15 +150,15 @@ export default function CollectPage() {
 
       const result = await model.generateContent([prompt, ...imageParts])
       const response = await result.response
-      const text ={
-        "wasteTypeMatch": true,
-        "quantityMatch": true,
-        "confidence": 0.8
-      }
-      
+      const text = response.text()
       
       try {
-        const parsedResult = text
+        const jsonStart = text.indexOf('{');
+        const jsonEnd = text.lastIndexOf('}');
+        const jsonText = text.substring(jsonStart, jsonEnd + 1);
+  
+        const parsedResult = JSON.parse(jsonText);
+        
         setVerificationResult({
           wasteTypeMatch: parsedResult.wasteTypeMatch,
           quantityMatch: parsedResult.quantityMatch,
@@ -198,6 +198,7 @@ export default function CollectPage() {
       setVerificationStatus('failure')
     }
   }
+  
 
   const filteredTasks = tasks.filter(task =>
     task.location.toLowerCase().includes(searchTerm.toLowerCase())

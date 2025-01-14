@@ -97,16 +97,16 @@ export default function ReportPage() {
   };
 
   const handleVerify = async () => {
-    if (!file) return
-
-    setVerificationStatus('verifying')
-    
+    if (!file) return;
+  
+    setVerificationStatus('verifying');
+  
     try {
       const genAI = new GoogleGenerativeAI(geminiApiKey!);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
+  
       const base64Data = await readFileAsBase64(file);
-
+  
       const imageParts = [
         {
           inlineData: {
@@ -115,52 +115,67 @@ export default function ReportPage() {
           },
         },
       ];
-
+  
       const prompt = `You are an expert in waste management and recycling. Analyze this image and provide:
         1. The type of waste (e.g., plastic, paper, glass, metal, organic)
         2. An estimate of the quantity or amount (in kg or liters)
         3. Your confidence level in this assessment (as a percentage)
-        
+  
         Respond in JSON format like this:
         {
           "wasteType": "type of waste",
-          "quantity": "estimated quantity with unit",
+          "quantity": "estimated quantity with unit as a single value",
           "confidence": confidence level as a number between 0 and 1
         }`;
-
+  
       const result = await model.generateContent([prompt, ...imageParts]);
       const response = await result.response;
-      
-      const text = {
-        "wasteType": "Mixed waste (primarily plastic, paper, organic, and some possible glass/metal)",
-        "quantity": "Approximately 20-30 kg",
-        "confidence": 0.7
-      }
-      
+      const text = response.text();
+  
+      console.log("Raw response text:", text);
+  
       try {
-        const parsedResult = text;
-        console.log(parsedResult)
-        if (parsedResult.wasteType && parsedResult.quantity && parsedResult.confidence) {
-          setVerificationResult(parsedResult);
+        // Extract the JSON-like content from the response
+        const jsonStart = text.indexOf('{');
+        const jsonEnd = text.lastIndexOf('}');
+        const jsonText = text.substring(jsonStart, jsonEnd + 1);
+  
+        const parsedResult = JSON.parse(jsonText);
+  
+        // Validate and normalize fields
+        const wasteType = parsedResult.wasteType || "Unknown";
+        const confidence = parseFloat(parsedResult.confidence) || 0;
+  
+        // Handle quantity normalization
+        let quantity = parsedResult.quantity || "Unknown";
+        const match = quantity.match(/(\d+)(?:[-~]?\d+)?\s*(kg|liters|ltr|g)/i);
+        quantity = match ? `${match[1]} ${match[2]}` : "Unknown";
+  
+        // Ensure all required fields exist
+        if (wasteType !== "Unknown" && quantity !== "Unknown" && confidence > 0) {
+          const verificationResult = { wasteType, quantity, confidence };
+          setVerificationResult(verificationResult);
           setVerificationStatus('success');
           setNewReport({
             ...newReport,
-            type: parsedResult.wasteType,
-            amount: parsedResult.quantity
+            type: wasteType,
+            amount: quantity,
           });
         } else {
           console.error('Invalid verification result:', parsedResult);
           setVerificationStatus('failure');
         }
       } catch (error) {
-        console.error('Failed to parse JSON response:', text);
+        console.error('Failed to parse JSON response:', text, 'Error:', error);
         setVerificationStatus('failure');
       }
     } catch (error) {
       console.error('Error verifying waste:', error);
       setVerificationStatus('failure');
     }
-  }
+  };
+  
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
