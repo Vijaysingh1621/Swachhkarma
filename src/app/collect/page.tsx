@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Trash2, MapPin, CheckCircle, Clock, ArrowRight, Camera, Upload, Loader, Calendar, Weight, Search } from 'lucide-react'
+import { Trash2, MapPin, CheckCircle, Clock, ArrowRight, Camera, Upload, Calendar, Weight, Search } from 'lucide-react'
+import Loader from "../../components/recyleSpinner"
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'react-hot-toast'
@@ -229,7 +230,7 @@ export default function CollectPage() {
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader className="animate-spin h-8 w-8 text-gray-500" />
+          <Loader />
         </div>
       ) : (
         <>
@@ -347,7 +348,7 @@ export default function CollectPage() {
             >
               {verificationStatus === 'verifying' ? (
                 <>
-                  <Loader className="animate-spin -ml-1 mr-3 h-5 w-5" />
+                  <Loader/>
                   Verifying...
                 </>
               ) : 'Verify Collection'}

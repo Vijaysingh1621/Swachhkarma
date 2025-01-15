@@ -1,7 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { getAllRewards, getUserByEmail } from '@/utils/db/actions'
-import { Loader, Award, Users, Trophy, Crown } from 'lucide-react'
+import { Award, Users, Trophy, Crown } from 'lucide-react'
+import Loader from "../../components/recyleSpinner"
 import { toast } from 'react-hot-toast'
 import { useUser } from '@clerk/nextjs'
 
@@ -56,7 +57,7 @@ export default function LeaderboardPage() {
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <Loader className="animate-spin h-8 w-8 text-gray-600" />
+            <Loader  />
           </div>
         ) : (
           <div className="bg-white shadow-xl rounded-2xl overflow-hidden">

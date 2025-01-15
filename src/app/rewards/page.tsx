@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Coins, ArrowUpRight, ArrowDownRight, Gift, AlertCircle, Loader } from 'lucide-react'
+import { Coins, ArrowUpRight, ArrowDownRight, Gift, AlertCircle } from 'lucide-react'
+import Loader from "../../components/recyleSpinner"
 import { Button } from '@/components/ui/button'
 import { getUserByEmail, getRewardTransactions, getAvailableRewards, redeemReward, createTransaction } from '@/utils/db/actions'
 import { toast } from 'react-hot-toast'
@@ -144,7 +145,7 @@ export default function RewardsPage() {
 
   if (loading) {
     return <div className="flex justify-center items-center h-64">
-      <Loader className="animate-spin h-8 w-8 text-gray-600" />
+      <Loader  />
     </div>
   }
 
