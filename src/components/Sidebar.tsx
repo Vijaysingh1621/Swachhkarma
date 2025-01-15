@@ -40,22 +40,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
             </Link>
           ))}
         </div>
-        <div className="p-4 border-t border-gray-200">
-          <Link href="/settings" passHref>
-            <Button
-              onClick={onClose} // Close the sidebar on click
-              variant={pathname === "/settings" ? "secondary" : "outline"}
-              className={`w-full py-3 ${
-                pathname === "/settings"
-                  ? "bg-green-100 text-green-800"
-                  : "text-gray-600 border-gray-300 hover:bg-gray-100"
-              }`}
-            >
-              <Settings className="mr-3 h-5 w-5" />
-              <span className="text-base">Settings</span>
-            </Button>
-          </Link>
-        </div>
+        
       </nav>
     </aside>
   )

@@ -112,21 +112,31 @@ export default function Header({ onMenuClick, totalEarnings }: HeaderProps) {
         </div>
         {!isMobile && (
           <div className="flex-1 max-w-xl mx-4">
-            <div className="relative">
+            <div className="relative hidden lg:flex md:flex">
               <input
                 type="text"
                 placeholder="Search..."
                 className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
               />
-              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              
+              <Search className="absolute  right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
           </div>
         )}
         <div className="flex items-center">
           {isMobile && (
+            <div>
+            <SignedOut>
+            <Button variant="ghost" size="icon" className="mr-2 hidden lg:flex md:flex">
+              <Search className="h-5 w-5" />
+            </Button>
+            </SignedOut>
+            <SignedIn>
             <Button variant="ghost" size="icon" className="mr-2">
               <Search className="h-5 w-5" />
             </Button>
+            </SignedIn>
+            </div>
           )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

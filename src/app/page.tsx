@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { ArrowRight, Leaf, Recycle, Users, Coins, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { motion } from 'framer-motion'
 import { Poppins } from 'next/font/google'
 import Link from 'next/link'
 import { SignedOut, SignedIn,SignInButton } from '@clerk/nextjs'
@@ -111,17 +112,46 @@ export default function Home() {
     <div className={`${poppins.className}`} >
       <div className="container mx-auto px-4 sm:px-6 lg:px-16 py-8">
         <section className="text-center flex justify-center items-center flex-col mb-16">
+        <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
           <AnimatedLogo />
+          </motion.div>
+
+          <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
           <TypingEffect mainText="SwachhKarma" tagline="Report. Collect. Redeem." />
+          </motion.div>
+          <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center"
+            >
           <p className="text-base sm:text-lg lg:text-[20px] text-gray-600 max-w-2xl mx-auto leading-relaxed mb-6">
             Join our community in making waste management more efficient and rewarding! Together, we transform waste into opportunity, fostering sustainability while rewarding responsible action.
             </p>
+            </motion.div>
           <SignedOut>
           <SignInButton>
+          <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y:10}}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
             <Button className="bg-green-600 hover:bg-green-700 text-white text-base sm:text-lg py-3 px-6 sm:px-10 rounded-full w-full sm:w-auto">
               Get Started
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
+            </motion.div>
             </SignInButton>
           </SignedOut>
           <SignedIn>
@@ -133,15 +163,26 @@ export default function Home() {
             </Link>
           </SignedIn>
         </section>
-
+        <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
         <div className="flex justify-center items-center m-4 sm:m-10 p-4 sm:p-[50px] rounded-lg shadow-md">
           <video className="max-w-full rounded-md" autoPlay muted loop playsInline>
             <source src="GarbageSorting.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
+        </motion.div>
 
-
+        <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
           <FeatureCard 
             icon={Leaf}
@@ -159,9 +200,23 @@ export default function Home() {
             description="Be part of a growing community committed to sustainable practices. Collaborate with others who share your vision for a greener future."
           />
         </section>
+        </motion.div>
 
+        <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
         <HowItWorks/>
+        </motion.div>
 
+        <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
         <section className="bg-white p-6 sm:p-10 rounded-3xl shadow-lg mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-center text-gray-800">Our Impact</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -171,9 +226,25 @@ export default function Home() {
             <ImpactCard title="CO2 Offset" value={`${impactData.co2Offset} kg`} icon={Leaf} />
           </div>
         </section>
+        </motion.div>
 
+        <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
         <Testimonials />
+        </motion.div>
+
+        <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
         <FAQ />
+        </motion.div>
       </div>
       <Footer />
     </div>

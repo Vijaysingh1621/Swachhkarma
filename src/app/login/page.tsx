@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight, Coins, Recycle } from 'lucide-react'
 import Image from 'next/image'
 import logo from "../../../public/swachlogoo.png";
+import { SignInButton } from '@clerk/nextjs'
 
 const poppins = Poppins({ 
   weight: ['300', '400', '600'],
@@ -73,6 +74,7 @@ export default function LoginPage() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.8, duration: 0.5 }}
       >
+        <SignInButton>
         <Button 
           className="bg-green-600 hover:bg-green-700 text-white text-lg py-6 px-8 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
           onMouseEnter={() => setIsHovered(true)}
@@ -86,6 +88,7 @@ export default function LoginPage() {
             <ArrowRight className="ml-2 h-6 w-6" />
           </motion.div>
         </Button>
+        </SignInButton>
       </motion.div>
     </div>
   )
