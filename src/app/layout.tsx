@@ -11,10 +11,6 @@ import { getAvailableRewards, getUserByEmail } from '@/utils/db/actions'
 
 import {
   ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton
 } from '@clerk/nextjs'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -57,8 +53,8 @@ export default function RootLayout({
           {/* <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} totalEarnings={totalEarnings} /> */}
           <ClerkHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} totalEarnings={totalEarnings} />
           <div className="flex flex-1">
-            <Sidebar open={sidebarOpen} />
-            <main className="flex-1 p-4 lg:p-8 ml-0 lg:ml-64 transition-all duration-300">
+          <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+            <main className="flex-1 lg:p-0 ml-0 lg:ml-64 transition-all duration-300 overflow-x-hidden">
               {children}
             </main>
           </div>
