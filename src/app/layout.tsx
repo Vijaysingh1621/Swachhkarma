@@ -50,7 +50,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <div className="min-h-screen bg-gray-50 flex flex-col">
-          {/* <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} totalEarnings={totalEarnings} /> */}
           <ClerkHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} totalEarnings={totalEarnings} />
           <div className="flex flex-1">
           <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
